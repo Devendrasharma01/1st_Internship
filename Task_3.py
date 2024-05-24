@@ -1,63 +1,103 @@
 class Task:
-    def __init__(self, name, description):
-        self.name = name
-        self.description = description
 
-class TaskManager:
-    def __init__(self):
-        self.tasks = []
+  def __init__(self, description):
+    self.description = description
+    self.completed = False
 
-    def create_task(self):
-        name = input("Enter task name: ")
-        description = input("Enter task description: ")
-        self.tasks.append(Task(name, description))
-        print("Task created successfully!")
+  def mark_completed(self):
+    self.completed = True
 
-    def read_tasks(self):
-        for i, task in enumerate(self.tasks):
-            print(f"Task {i+1}:")
-            print(f"Name: {task.name}")
-            print(f"Description: {task.description}")
+  def __str__(self):
+    status = "Completed" if self.completed else "Pending"
+    return f"- {self.description} ({status})"
 
-    def update_task(self):
-        task_id = int(input("Enter task ID to update: ")) - 1
-        if task_id < 0 or task_id >= len(self.tasks):
-            print("Invalid task ID!")
-            return
-        name = input("Enter new task name: ")
-        description = input("Enter new task description: ")
-        self.tasks[task_id] = Task(name, description)
-        print("Task updated successfully!")
 
-    def delete_task(self):
-        task_id = int(input("Enter task ID to delete: ")) - 1
-        if task_id < 0 or task_id >= len(self.tasks):
-            print("Invalid task ID!")
-            return
-        del self.tasks[task_id]
-        print("Task deleted successfully!")
+def create_task():
+ 
+    description = input("Enter task description: ")
+    return Task(description)
+
+
+def display_tasks(tasks):
+  
+  if not tasks:
+    print("There are no tasks to display.")
+    return
+  print("Your tasks:")
+  for i, task in enumerate(tasks, start=1):
+    print(f"{i}. {task}")
+
+
+def update_task(tasks):
+
+  display_tasks(tasks)
+  if not tasks:
+    return
+
+  try:
+    task_index = int(input("Enter the number of the task to update: ")) - 1
+    if task_index < 0 or task_index >= len(tasks):
+      raise IndexError("Invalid task number.")
+
+    choice = input("Update description (d) or mark complete (c)? ").lower()
+    if choice == "d":
+      new_description = input("Enter new description: ")
+      tasks[task_index].description = new_description
+    elif choice == "c":
+      tasks[task_index].mark_completed()
+    else:
+      print("Invalid choice.")
+  except ValueError:
+    print("Invalid input. Please enter a number.")
+  except IndexError:
+    print("Task not found.")
+
+
+def delete_task(tasks):
+
+  display_tasks(tasks)
+  if not tasks:
+    return
+
+  try:
+    task_index = int(input("Enter the number of the task to delete: ")) - 1
+    if task_index < 0 or task_index >= len(tasks):
+      raise IndexError("Invalid task number.")
+    del tasks[task_index]
+    print("Task deleted successfully.")
+  except ValueError:
+    print("Invalid input. Please enter a number.")
+  except IndexError:
+    print("Task not found.")
+
 
 def main():
-    task_manager = TaskManager()
-    while True:
-        print("\n1. Create task")
-        print("2. Read tasks")
-        print("3. Update task")
-        print("4. Delete task")
-        print("5. Exit")
-        option = int(input("Choose an option: "))
-        if option == 1:
-            task_manager.create_task()
-        elif option == 2:
-            task_manager.read_tasks()
-        elif option == 3:
-            task_manager.update_task()
-        elif option == 4:
-            task_manager.delete_task()
-        elif option == 5:
-            break
-        else:
-            print("Invalid option!")
+
+  tasks = []
+  while True:
+    print("\nTask Manager")
+    print("1. Create Task")
+    print("2. Display Tasks")
+    print("3. Update Task")
+    print("4. Delete Task")
+    print("5. Exit")
+
+    choice = input("Enter your choice (1-5): ")
+
+    if choice == "1":
+      tasks.append(create_task())
+    elif choice == "2":
+      display_tasks(tasks)
+    elif choice == "3":
+      update_task(tasks)
+    elif choice == "4":
+      delete_task(tasks)
+    elif choice == "5":
+      print("Exiting...")
+      break
+    else:
+      print("Invalid choice. Please try again.")
+
 
 
 main()
